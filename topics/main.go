@@ -1,5 +1,5 @@
 package topics
 
 const (
-	syncUsers = "sync.users"
+	SyncUsers = "sync.users"
 )

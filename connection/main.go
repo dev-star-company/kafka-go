@@ -1,26 +1,32 @@
 package connection
 
 import (
+	"context"
+
 	"github.com/segmentio/kafka-go"
 )
 
-func New(network string, address string) (*kafka.Conn, error) {
-	// to connect to the kafka leader via an existing non-leader connection rather than using DialLeader
-	conn, err := kafka.Dial(network, address)
+type Connectioner struct {
+	connections map[string]*kafka.Conn
+}
+
+func New() *Connectioner {
+	return &Connectioner{
+		connections: make(map[string]*kafka.Conn),
+	}
+}
+
+// Use topics from topics package
+func (c *Connectioner) ConnectToTopic(topic string, url string) (*kafka.Conn, error) {
+	if c.connections[topic] != nil {
+		return c.connections[topic], nil
+	}
+
+	conn, err := kafka.DialLeader(context.Background(), "tcp", url, topic, 0)
 	if err != nil {
 		return nil, err
 	}
 
+	c.connections[topic] = conn
 	return conn, nil
-	// defer conn.Close()
-	// controller, err := conn.Controller()
-	// if err != nil {
-	// 	panic(err.Error())
-	// }
-	// var connLeader *kafka.Conn
-	// connLeader, err = kafka.Dial("tcp", net.JoinHostPort(controller.Host, strconv.Itoa(controller.Port)))
-	// if err != nil {
-	// 	panic(err.Error())
-	// }
-	// defer connLeader.Close()
 }
