@@ -20,7 +20,7 @@ type SyncUserStruct struct {
 	UpdatedBy int64  `json:"updated_by"`
 }
 
-func (p Connectioner) PublishToSyncUsers(users []SyncUserStruct) error {
+func (p Connectioner) PublishToSyncUsers(message Message[SyncUserStruct]) error {
 	conn, ok := p.connections[topics.SyncUsers]
 	if !ok {
 		return errors.New("connection not found for topic SyncUsers")
@@ -28,17 +28,15 @@ func (p Connectioner) PublishToSyncUsers(users []SyncUserStruct) error {
 
 	conn.SetWriteDeadline(time.Now().Add(10 * time.Second))
 
-	for _, user := range users {
-		userBytes, err := json.Marshal(user)
-		if err != nil {
-			log.Fatal("failed to marshal user:", err)
-		}
-		_, err = conn.WriteMessages(
-			kafka.Message{Value: userBytes},
-		)
-		if err != nil {
-			log.Fatal("failed to write messages:", err)
-		}
+	userBytes, err := json.Marshal(message)
+	if err != nil {
+		log.Fatal("failed to marshal user:", err)
+	}
+	_, err = conn.WriteMessages(
+		kafka.Message{Value: userBytes},
+	)
+	if err != nil {
+		log.Fatal("failed to write messages:", err)
 	}
 
 	return nil

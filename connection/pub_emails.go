@@ -22,25 +22,23 @@ type SyncEmailStruct struct {
 	Main      bool    `json:"main"`
 }
 
-func (p Connectioner) PublishToSyncEmails(emails []SyncEmailStruct) error {
+func (p Connectioner) PublishToSyncEmails(message Message[SyncEmailStruct]) error {
 	conn, ok := p.connections[topics.SyncEmails]
-	if !ok {
-		return errors.New("connection not found for topic SyncEmails")
+	if !ok || conn == nil {
+		return errors.New("failed to connect to topic SyncEmails")
 	}
 
 	conn.SetWriteDeadline(time.Now().Add(10 * time.Second))
 
-	for _, email := range emails {
-		emailBytes, err := json.Marshal(email)
-		if err != nil {
-			log.Fatal("failed to marshal email:", err)
-		}
-		_, err = conn.WriteMessages(
-			kafka.Message{Value: emailBytes},
-		)
-		if err != nil {
-			log.Fatal("failed to write messages:", err)
-		}
+	emailBytes, err := json.Marshal(message)
+	if err != nil {
+		log.Fatal("failed to marshal email:", err)
+	}
+	_, err = conn.WriteMessages(
+		kafka.Message{Value: emailBytes},
+	)
+	if err != nil {
+		log.Fatal("failed to write messages:", err)
 	}
 
 	return nil

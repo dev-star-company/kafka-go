@@ -6,13 +6,24 @@ import (
 	"github.com/segmentio/kafka-go"
 )
 
-type Connectioner struct {
-	connections map[string]*kafka.Conn
+type Message[T SyncEmailStruct | SyncPhoneStruct | SyncUserStruct] struct {
+	Action  string `json:"action"` // "create", "update", or "delete"
+	Payload T      `json:"object"` // any of the SyncSomethingStruct types
 }
 
-func New() *Connectioner {
+type Connectioner struct {
+	connections     map[string]*kafka.Conn
+	consumerGroupID string
+}
+
+// ConsumerGroupId is the ID of the consumer group that will be used for subscribing to topics.
+// It is used to ensure that multiple consumers can read from the same topic without duplicating messages.
+// It is important to set this ID when creating a new Connectioner instance.
+// Should be set to a unique value for each consumer group.
+func New(consumerGroupID string) *Connectioner {
 	return &Connectioner{
-		connections: make(map[string]*kafka.Conn),
+		connections:     make(map[string]*kafka.Conn),
+		consumerGroupID: consumerGroupID,
 	}
 }
 
