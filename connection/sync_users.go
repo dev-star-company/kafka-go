@@ -1,6 +1,8 @@
 package connection
 
 import (
+	"encoding/json"
+	"errors"
 	"log"
 	"time"
 
@@ -19,19 +21,24 @@ type SyncUserStruct struct {
 }
 
 func (p Connectioner) PublishToSyncUsers(users []SyncUserStruct) error {
-	conn, err := p.connections[topics.SyncUsers]
-	if err != nil {
-		return err
+	conn, ok := p.connections[topics.SyncUsers]
+	if !ok {
+		return errors.New("connection not found for topic SyncUsers")
 	}
 
 	conn.SetWriteDeadline(time.Now().Add(10 * time.Second))
-	_, err = conn.WriteMessages(
-		kafka.Message{Value: []byte("one!")},
-		kafka.Message{Value: []byte("two!")},
-		kafka.Message{Value: []byte("three!")},
-	)
-	if err != nil {
-		log.Fatal("failed to write messages:", err)
+
+	for _, user := range users {
+		userBytes, err := json.Marshal(user)
+		if err != nil {
+			log.Fatal("failed to marshal user:", err)
+		}
+		_, err = conn.WriteMessages(
+			kafka.Message{Value: userBytes},
+		)
+		if err != nil {
+			log.Fatal("failed to write messages:", err)
+		}
 	}
 
 	return nil
