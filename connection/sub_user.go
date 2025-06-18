@@ -29,7 +29,7 @@ func (c Connectioner) SubscribeToUsers(ctx context.Context) (<-chan Message[Sync
 		Brokers:  []string{url},
 		GroupID:  c.consumerGroupID,
 		Topic:    topics.SyncUsers,
-		MaxBytes: 10e6, // 10MB
+		MaxBytes: 1e6, // 1MB
 	})
 
 	go func() {
