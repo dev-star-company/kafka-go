@@ -15,11 +15,11 @@ type SyncUserStruct struct {
 	ID        int64   `json:"id"`
 	Name      *string `json:"name"`
 	Surname   *string `json:"surname"`
-	CreatedAt *string `json:"created_at"`
-	UpdatedAt *string `json:"updated_at"`
+	CreatedAt *time.Time `json:"created_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
 	CreatedBy *int64  `json:"created_by"`
 	UpdatedBy *int64  `json:"updated_by"`
-	DeletedAt *string `json:"deleted_at,omitempty"`
+	DeletedAt *time.Time `json:"deleted_at,omitempty"`
 	DeletedBy *int64  `json:"deleted_by,omitempty"`
 }
 
