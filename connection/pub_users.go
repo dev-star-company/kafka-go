@@ -11,13 +11,14 @@ import (
 )
 
 type SyncUserStruct struct {
-	ID        int64  `json:"id"`
-	Name      string `json:"name"`
-	Surname   string `json:"surname"`
-	CreatedAt string `json:"created_at"`
-	UpdatedAt string `json:"updated_at"`
-	CreatedBy int64  `json:"created_by"`
-	UpdatedBy int64  `json:"updated_by"`
+	ID          int64  `json:"id"`
+	RequesterID int64  `json:"requester_id"`
+	Name        *string `json:"name"`
+	Surname     *string `json:"surname"`
+	CreatedAt   *string `json:"created_at"`
+	UpdatedAt   *string `json:"updated_at"`
+	CreatedBy   *int64  `json:"created_by"`
+	UpdatedBy   *int64  `json:"updated_by"`
 }
 
 func (p Connectioner) PublishToSyncUsers(message Message[SyncUserStruct]) error {
