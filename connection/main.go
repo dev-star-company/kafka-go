@@ -3,16 +3,18 @@ package connection
 import (
 	"context"
 
+	"github.com/dev-star-company/kafka-go/actions"
+	"github.com/dev-star-company/kafka-go/topics"
 	"github.com/segmentio/kafka-go"
 )
 
 type Message[T SyncEmailStruct | SyncPhoneStruct | SyncUserStruct] struct {
-	Action  string `json:"action"` // "create", "update", or "delete"
-	Payload T      `json:"object"` // any of the SyncSomethingStruct types
+	Action  actions.Action `json:"action"` // "create", "update", or "delete"
+	Payload T              `json:"object"` // any of the SyncSomethingStruct types
 }
 
 type Connectioner struct {
-	connections     map[string]*kafka.Conn
+	connections     map[topics.Topic]*kafka.Conn
 	consumerGroupID string
 }
 
@@ -22,18 +24,18 @@ type Connectioner struct {
 // Should be set to a unique value for each consumer group.
 func New(consumerGroupID string) *Connectioner {
 	return &Connectioner{
-		connections:     make(map[string]*kafka.Conn),
+		connections:     make(map[topics.Topic]*kafka.Conn),
 		consumerGroupID: consumerGroupID,
 	}
 }
 
 // Use topics from topics package
-func (c *Connectioner) ConnectToTopic(topic string, url string) (*kafka.Conn, error) {
+func (c *Connectioner) ConnectToTopic(topic topics.Topic, url string) (*kafka.Conn, error) {
 	if c.connections[topic] != nil {
 		return c.connections[topic], nil
 	}
 
-	conn, err := kafka.DialLeader(context.Background(), "tcp", url, topic, 0)
+	conn, err := kafka.DialLeader(context.Background(), "tcp", url, string(topic), 0)
 	if err != nil {
 		return nil, err
 	}

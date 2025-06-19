@@ -28,7 +28,7 @@ func (c Connectioner) SubscribeToUsers(ctx context.Context) (<-chan Message[Sync
 	r := kafka.NewReader(kafka.ReaderConfig{
 		Brokers:  []string{url},
 		GroupID:  c.consumerGroupID,
-		Topic:    topics.SyncUsers,
+		Topic:    string(topics.SyncUsers),
 		MaxBytes: 1e6, // 1MB
 	})
 

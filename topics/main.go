@@ -1,9 +1,11 @@
 package topics
 
+type Topic string
+
 const (
-	SyncUsers     = "sync.users"
-	SyncPhones    = "sync.phones"
-	SyncEmails    = "sync.emails"
-	SyncAddresses = "sync.addresses"
-	SyncRoles     = "sync.roles"
+	SyncUsers     Topic = "sync.users"
+	SyncPhones    Topic = "sync.phones"
+	SyncEmails    Topic = "sync.emails"
+	SyncAddresses Topic = "sync.addresses"
+	SyncRoles     Topic = "sync.roles"
 )

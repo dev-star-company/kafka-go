@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/dev-star-company/custom-validate/validate"
 	"github.com/dev-star-company/kafka-go/topics"
 	"github.com/segmentio/kafka-go"
 )
@@ -28,8 +29,8 @@ func (p Connectioner) SubscribeToPhones(ctx context.Context) (<-chan Message[Syn
 	r := kafka.NewReader(kafka.ReaderConfig{
 		Brokers:  []string{url},
 		GroupID:  p.consumerGroupID,
-		Topic:    topics.SyncPhones,
-		MaxBytes: 10e6, // 10MB
+		Topic:    string(topics.SyncPhones),
+		MaxBytes: 1e6, // 1MB
 	})
 
 	// Handle graceful shutdown via context
@@ -46,6 +47,44 @@ func (p Connectioner) SubscribeToPhones(ctx context.Context) (<-chan Message[Syn
 			if err := json.Unmarshal(msg.Value, &phone); err != nil {
 				continue // skip invalid messages
 			}
+
+			// Validation logic similar to pub_users.go
+			var fields map[string]string
+			switch phone.Action {
+			case "create":
+				fields = map[string]string{
+					"Id":        "required,numeric,min=1",
+					"UserId":    "required,numeric,min=1",
+					"Phone":     "required,min=3",
+					"CreatedAt": "required,datetime",
+					"UpdatedAt": "required,datetime",
+					"CreatedBy": "required,numeric,min=1",
+					"UpdatedBy": "required,numeric,min=1",
+				}
+			case "update":
+				fields = map[string]string{
+					"Id":        "required,numeric,min=1",
+					"UserId":    "optional,numeric,min=1",
+					"Phone":     "optional,min=3",
+					"UpdatedAt": "required,datetime",
+					"UpdatedBy": "required,numeric,min=1",
+					"DeletedAt": "optional,datetime",
+					"DeletedBy": "optional,numeric,min=1",
+				}
+			case "delete":
+				fields = map[string]string{
+					"Id":         "required,numeric,min=1",
+					"DetectedAt": "required,datetime",
+					"DetectedBy": "required,numeric,min=1",
+				}
+			default:
+				continue // skip invalid action
+			}
+
+			if err := validate.Validate(fields, phone.Payload); err != nil {
+				continue // skip invalid messages
+			}
+
 			select {
 			case ch <- phone:
 				r.CommitMessages(ctx, msg) // Commit the message after successful processing
