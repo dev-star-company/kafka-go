@@ -6,6 +6,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/dev-star-company/custom-validate/validate"
 	"github.com/dev-star-company/kafka-go/topics"
 	"github.com/segmentio/kafka-go"
 )
@@ -26,6 +27,46 @@ func (p Connectioner) PublishToSyncPhones(message Message[SyncPhoneStruct]) erro
 	conn, ok := p.connections[topics.SyncPhones]
 	if !ok {
 		return errors.New("connection not found for topic SyncPhones")
+	}
+
+	if message.Action != "create" && message.Action != "update" && message.Action != "delete" {
+		return errors.New("invalid action: must be 'create', 'update', or 'delete'")
+	}
+
+	switch message.Action {
+	case "create":
+		fields := map[string]string{
+			"Id":        "required,numeric,min=1",
+			"Phone":     "required,min=3",
+			"CreatedAt": "required,datetime",
+			"UpdatedAt": "required,datetime",
+			"CreatedBy": "required,numeric,min=1",
+			"UpdatedBy": "required,numeric,min=1",
+		}
+		if err := validate.Validate(fields, message.Payload); err != nil {
+			return err
+		}
+	case "update":
+		fields := map[string]string{
+			"Id":        "required,numeric,min=1",
+			"Phone":     "optional,min=3",
+			"UpdatedAt": "required,datetime",
+			"UpdatedBy": "required,numeric,min=1",
+			"DeletedAt": "optional,datetime",
+			"DeletedBy": "optional,numeric,min=1",
+		}
+		if err := validate.Validate(fields, message.Payload); err != nil {
+			return err
+		}
+	case "delete":
+		fields := map[string]string{
+			"Id":         "required,numeric,min=1",
+			"DetectedAt": "required,datetime",
+			"DetectedBy": "required,numeric,min=1",
+		}
+		if err := validate.Validate(fields, message.Payload); err != nil {
+			return err
+		}
 	}
 
 	conn.SetWriteDeadline(time.Now().Add(10 * time.Second))

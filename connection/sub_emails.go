@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/dev-star-company/custom-validate/validate"
 	"github.com/dev-star-company/kafka-go/topics"
 	"github.com/segmentio/kafka-go"
 )
@@ -38,65 +37,22 @@ func (c Connectioner) SubscribeToEmails(ctx context.Context) (<-chan Message[Syn
 		defer r.Close()
 
 		for {
+			msg, err := r.ReadMessage(ctx)
+			if err != nil {
+				// Exit on context cancellation or reader close
+				return
+			}
+
+			var email Message[SyncEmailStruct]
+			if err := json.Unmarshal(msg.Value, &email); err != nil {
+				continue // skip invalid messages
+			}
+
 			select {
+			case ch <- email:
+				r.CommitMessages(ctx, msg) // Commit the message after successful processing
 			case <-ctx.Done():
 				return
-			default:
-				msg, err := r.ReadMessage(ctx)
-				if err != nil {
-					// Optionally log error here
-					return
-				}
-
-				var email Message[SyncEmailStruct]
-				if err := json.Unmarshal(msg.Value, &email); err != nil {
-					// Optionally log error here
-					continue
-				}
-
-				// Validation logic similar to pub_users.go
-				var fields map[string]string
-				switch email.Action {
-				case "create":
-					fields = map[string]string{
-						"Id":        "required,numeric,min=1",
-						"UserId":    "required,numeric,min=1",
-						"Email":     "required,min=3",
-						"CreatedAt": "required,datetime",
-						"UpdatedAt": "required,datetime",
-						"CreatedBy": "required,numeric,min=1",
-						"UpdatedBy": "required,numeric,min=1",
-					}
-				case "update":
-					fields = map[string]string{
-						"Id":        "required,numeric,min=1",
-						"UserId":    "optional,numeric,min=1",
-						"Email":     "optional,min=3",
-						"UpdatedAt": "required,datetime",
-						"UpdatedBy": "required,numeric,min=1",
-						"DeletedAt": "optional,datetime",
-						"DeletedBy": "optional,numeric,min=1",
-					}
-				case "delete":
-					fields = map[string]string{
-						"Id":         "required,numeric,min=1",
-						"DetectedAt": "required,datetime",
-						"DetectedBy": "required,numeric,min=1",
-					}
-				default:
-					continue // skip invalid action
-				}
-
-				if err := validate.Validate(fields, email.Payload); err != nil {
-					continue // skip invalid messages
-				}
-
-				select {
-				case ch <- email:
-					r.CommitMessages(ctx, msg) // Commit the message after successful processing
-				case <-ctx.Done():
-					return
-				}
 			}
 		}
 	}()
