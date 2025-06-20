@@ -8,11 +8,12 @@ import (
 
 	"github.com/dev-star-company/custom-validate/validate"
 	"github.com/dev-star-company/kafka-go/topics"
+	"github.com/google/uuid"
 	"github.com/segmentio/kafka-go"
 )
 
 type SyncUserStruct struct {
-	ID        int        `json:"id"`
+	Uuid      uuid.UUID  `json:"uuid"`
 	Name      *string    `json:"name"`
 	Surname   *string    `json:"surname"`
 	CreatedAt *time.Time `json:"created_at"`
@@ -36,7 +37,7 @@ func (p Connectioner) PublishToSyncUsers(message Message[SyncUserStruct]) error 
 	switch message.Action {
 	case "create":
 		fields := map[string]string{
-			"Id":        "required,numeric,min=1",
+			"Uuid":      "required,uuid",
 			"Name":      "required,min=3",
 			"Surname":   "required,min=3",
 			"CreatedAt": "required,datetime",
@@ -50,7 +51,7 @@ func (p Connectioner) PublishToSyncUsers(message Message[SyncUserStruct]) error 
 		}
 	case "update":
 		fields := map[string]string{
-			"Id":        "required,numeric,min=1",
+			"Uuid":      "required,uuid",
 			"Name":      "optional,min=3",
 			"Surname":   "optional,min=3",
 			"UpdatedAt": "required,datetime",
@@ -64,7 +65,7 @@ func (p Connectioner) PublishToSyncUsers(message Message[SyncUserStruct]) error 
 		}
 	case "delete":
 		fields := map[string]string{
-			"Id":         "required,numeric,min=1",
+			"Uuid":       "required,uuid",
 			"DetectedAt": "required,datetime",
 			"DetectedBy": "required,numeric,min=1",
 		}

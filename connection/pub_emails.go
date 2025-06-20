@@ -8,11 +8,12 @@ import (
 
 	"github.com/dev-star-company/custom-validate/validate"
 	"github.com/dev-star-company/kafka-go/topics"
+	"github.com/google/uuid"
 	"github.com/segmentio/kafka-go"
 )
 
 type SyncEmailStruct struct {
-	ID        int        `json:"id"`
+	Uuid      uuid.UUID  `json:"uuid"`
 	Email     *string    `json:"email"`
 	CreatedAt *time.Time `json:"created_at"`
 	UpdatedAt *time.Time `json:"updated_at"`
@@ -36,7 +37,7 @@ func (p Connectioner) PublishToSyncEmails(message Message[SyncEmailStruct]) erro
 	switch message.Action {
 	case "create":
 		fields := map[string]string{
-			"Id":        "required,numeric,min=1",
+			"Uuid":      "required,uuid",
 			"Email":     "required,min=3",
 			"CreatedAt": "required,datetime",
 			"UpdatedAt": "required,datetime",
@@ -48,7 +49,7 @@ func (p Connectioner) PublishToSyncEmails(message Message[SyncEmailStruct]) erro
 		}
 	case "update":
 		fields := map[string]string{
-			"Id":        "required,numeric,min=1",
+			"Uuid":      "required,uuid",
 			"Email":     "optional,min=3",
 			"UpdatedAt": "required,datetime",
 			"UpdatedBy": "required,numeric,min=1",
@@ -60,7 +61,7 @@ func (p Connectioner) PublishToSyncEmails(message Message[SyncEmailStruct]) erro
 		}
 	case "delete":
 		fields := map[string]string{
-			"Id":         "required,numeric,min=1",
+			"Uuid":       "required,uuid",
 			"DetectedAt": "required,datetime",
 			"DetectedBy": "required,numeric,min=1",
 		}
