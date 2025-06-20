@@ -12,15 +12,15 @@ import (
 )
 
 type SyncUserStruct struct {
-	ID        int64      `json:"id"`
+	ID        int        `json:"id"`
 	Name      *string    `json:"name"`
 	Surname   *string    `json:"surname"`
 	CreatedAt *time.Time `json:"created_at"`
 	UpdatedAt *time.Time `json:"updated_at"`
-	CreatedBy *int64     `json:"created_by"`
-	UpdatedBy *int64     `json:"updated_by"`
+	CreatedBy *int       `json:"created_by"`
+	UpdatedBy *int       `json:"updated_by"`
 	DeletedAt *time.Time `json:"deleted_at,omitempty"`
-	DeletedBy *int64     `json:"deleted_by,omitempty"`
+	DeletedBy *int       `json:"deleted_by,omitempty"`
 }
 
 func (p Connectioner) PublishToSyncUsers(message Message[SyncUserStruct]) error {

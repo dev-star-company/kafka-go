@@ -12,14 +12,14 @@ import (
 )
 
 type SyncEmailStruct struct {
-	ID        uint32  `json:"id"`
+	ID        int     `json:"id"`
 	Email     *string `json:"email"`
 	CreatedAt *string `json:"created_at"`
 	UpdatedAt *string `json:"updated_at"`
 	DeletedAt *string `json:"deleted_at,omitempty"`
-	CreatedBy *uint32 `json:"created_by"`
-	UpdatedBy *uint32 `json:"updated_by"`
-	DeletedBy *uint32 `json:"deleted_by,omitempty"`
+	CreatedBy *int    `json:"created_by"`
+	UpdatedBy *int    `json:"updated_by"`
+	DeletedBy *int    `json:"deleted_by,omitempty"`
 	Main      *bool   `json:"main"`
 }
 
