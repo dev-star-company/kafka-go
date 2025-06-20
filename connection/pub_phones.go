@@ -12,15 +12,15 @@ import (
 )
 
 type SyncPhoneStruct struct {
-	ID        int     `json:"id"`
-	Phone     *string `json:"phone"`
-	CreatedAt *string `json:"created_at"`
-	UpdatedAt *string `json:"updated_at"`
-	DeletedAt *string `json:"deleted_at,omitempty"`
-	CreatedBy *int    `json:"created_by"`
-	UpdatedBy *int    `json:"updated_by"`
-	DeletedBy *int    `json:"deleted_by,omitempty"`
-	Main      *bool   `json:"main"`
+	ID        int        `json:"id"`
+	Phone     *string    `json:"phone"`
+	CreatedAt *time.Time `json:"created_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
+	DeletedAt *time.Time `json:"deleted_at,omitempty"`
+	CreatedBy *int       `json:"created_by"`
+	UpdatedBy *int       `json:"updated_by"`
+	DeletedBy *int       `json:"deleted_by,omitempty"`
+	Main      *bool      `json:"main"`
 }
 
 func (p Connectioner) PublishToSyncPhones(message Message[SyncPhoneStruct]) error {
