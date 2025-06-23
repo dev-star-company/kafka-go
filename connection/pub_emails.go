@@ -14,6 +14,7 @@ import (
 
 type SyncEmailStruct struct {
 	Uuid      uuid.UUID  `json:"uuid"`
+	UserUuid  uuid.UUID  `json:"user_uuid"`
 	Email     *string    `json:"email"`
 	CreatedAt *time.Time `json:"created_at"`
 	UpdatedAt *time.Time `json:"updated_at"`
@@ -38,6 +39,8 @@ func (p Connectioner) PublishToSyncEmails(message Message[SyncEmailStruct]) erro
 	case "create":
 		fields := map[string]string{
 			"Uuid":      "required,uuid",
+			"UserUuid":  "required,uuid",
+			"Main":      "optional,boolean",
 			"Email":     "required,min=3",
 			"CreatedAt": "required,datetime",
 			"UpdatedAt": "required,datetime",
@@ -50,11 +53,13 @@ func (p Connectioner) PublishToSyncEmails(message Message[SyncEmailStruct]) erro
 	case "update":
 		fields := map[string]string{
 			"Uuid":      "required,uuid",
+			"UserUuid":  "optional,uuid",
 			"Email":     "optional,min=3",
 			"UpdatedAt": "required,datetime",
 			"UpdatedBy": "required,numeric,min=1",
 			"DeletedAt": "optional,datetime",
 			"DeletedBy": "optional,numeric,min=1",
+			"Main":      "optional,boolean",
 		}
 		if err := validate.Validate(fields, message.Payload); err != nil {
 			return err

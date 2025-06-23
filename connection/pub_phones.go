@@ -14,6 +14,7 @@ import (
 
 type SyncPhoneStruct struct {
 	Uuid      uuid.UUID  `json:"uuid"`
+	UserUuid  uuid.UUID  `json:"user_uuid"`
 	Phone     *string    `json:"phone"`
 	CreatedAt *time.Time `json:"created_at"`
 	UpdatedAt *time.Time `json:"updated_at"`
@@ -31,13 +32,15 @@ func (p Connectioner) PublishToSyncPhones(message Message[SyncPhoneStruct]) erro
 	}
 
 	if message.Action != "create" && message.Action != "update" && message.Action != "delete" {
-		return errors.New("invalid action: must be 'create', 'update', or 'delete'")
+		return errors.New("invalid action: must be 'create', 'update' or 'delete'")
 	}
 
 	switch message.Action {
 	case "create":
 		fields := map[string]string{
 			"Uuid":      "required,uuid",
+			"UserUuid":  "required,uuid",
+			"Main":      "optional,boolean",
 			"Phone":     "required,min=3",
 			"CreatedAt": "required,datetime",
 			"UpdatedAt": "required,datetime",
@@ -50,6 +53,8 @@ func (p Connectioner) PublishToSyncPhones(message Message[SyncPhoneStruct]) erro
 	case "update":
 		fields := map[string]string{
 			"Uuid":      "required,uuid",
+			"UserUuid":  "optional,uuid",
+			"Main":      "optional,boolean",
 			"Phone":     "optional,min=3",
 			"UpdatedAt": "required,datetime",
 			"UpdatedBy": "required,numeric,min=1",
