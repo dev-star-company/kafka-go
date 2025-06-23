@@ -13,15 +13,15 @@ import (
 )
 
 type SyncUserStruct struct {
-	Uuid      uuid.UUID  `json:"uuid"`
-	Name      *string    `json:"name"`
-	Surname   *string    `json:"surname"`
-	CreatedAt *time.Time `json:"created_at"`
-	UpdatedAt *time.Time `json:"updated_at"`
-	CreatedBy *int       `json:"created_by"`
-	UpdatedBy *int       `json:"updated_by"`
-	DeletedAt *time.Time `json:"deleted_at,omitempty"`
-	DeletedBy *int       `json:"deleted_by,omitempty"`
+	Uuid      uuid.UUID `json:"uuid"`
+	Name      *string   `json:"name"`
+	Surname   *string   `json:"surname"`
+	CreatedAt *string   `json:"created_at"`
+	UpdatedAt *string   `json:"updated_at"`
+	CreatedBy *int      `json:"created_by"`
+	UpdatedBy *int      `json:"updated_by"`
+	DeletedAt *string   `json:"deleted_at,omitempty"`
+	DeletedBy *int      `json:"deleted_by,omitempty"`
 }
 
 func (p Connectioner) PublishToSyncUsers(message Message[SyncUserStruct]) error {
