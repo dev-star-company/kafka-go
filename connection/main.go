@@ -9,8 +9,9 @@ import (
 )
 
 type Message[T SyncEmailStruct | SyncPhoneStruct | SyncUserStruct] struct {
-	Action  actions.Action `json:"action"` // "create", "update", or "delete"
-	Payload T              `json:"object"` // any of the SyncSomethingStruct types
+	Action    actions.Action `json:"action"`    // "create", "update", or "delete"
+	Payload   T              `json:"object"`    // any of the SyncSomethingStruct types
+	Publisher string         `json:"publisher"` // the name of the publisher
 }
 
 type Connectioner struct {

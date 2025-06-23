@@ -47,7 +47,9 @@ func (c Connectioner) SubscribeToEmails(ctx context.Context) (<-chan Message[Syn
 			if err := json.Unmarshal(msg.Value, &email); err != nil {
 				continue // skip invalid messages
 			}
-
+			if email.Publisher == c.consumerGroupID {
+				continue // skip messages from the same publisher
+			}
 			select {
 			case ch <- email:
 				r.CommitMessages(ctx, msg) // Commit the message after successful processing

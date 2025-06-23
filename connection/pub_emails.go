@@ -32,7 +32,7 @@ func (p Connectioner) PublishToSyncEmails(message Message[SyncEmailStruct]) erro
 	}
 
 	if message.Action != "create" && message.Action != "update" && message.Action != "delete" {
-		return errors.New("invalid action: must be 'create', 'update', or 'delete'")
+		return errors.New("invalid action: must be 'create', 'update' or 'delete'")
 	}
 
 	switch message.Action {

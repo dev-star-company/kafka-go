@@ -45,6 +45,9 @@ func (p Connectioner) SubscribeToPhones(ctx context.Context) (<-chan Message[Syn
 			if err := json.Unmarshal(msg.Value, &phone); err != nil {
 				continue // skip invalid messages
 			}
+			if phone.Publisher == p.consumerGroupID {
+				continue // skip messages from the same publisher
+			}
 			select {
 			case ch <- phone:
 				r.CommitMessages(ctx, msg) // Commit the message after successful processing
