@@ -39,7 +39,7 @@ func (p Connectioner) PublishToSyncPhones(message Message[SyncPhoneStruct]) erro
 		fields := map[string]string{
 			"Uuid":      "required,uuid",
 			"UserUuid":  "required,uuid",
-			"Main":      "optional,boolean",
+			"Main":      "omitempty,boolean",
 			"Phone":     "required,min=3",
 			"CreatedAt": "required",
 			"UpdatedAt": "required",
@@ -52,13 +52,13 @@ func (p Connectioner) PublishToSyncPhones(message Message[SyncPhoneStruct]) erro
 	case "update":
 		fields := map[string]string{
 			"Uuid":      "required,uuid",
-			"UserUuid":  "optional,uuid",
-			"Main":      "optional,boolean",
-			"Phone":     "optional,min=3",
+			"UserUuid":  "omitempty,uuid",
+			"Main":      "omitempty,boolean",
+			"Phone":     "omitempty,min=3",
 			"UpdatedAt": "required",
 			"UpdatedBy": "required,numeric,min=1",
-			"DeletedAt": "optional",
-			"DeletedBy": "optional,numeric,min=1",
+			"DeletedAt": "omitempty",
+			"DeletedBy": "omitempty,numeric,min=1",
 		}
 		if err := validate.Validate(fields, message.Payload); err != nil {
 			return err
@@ -73,7 +73,7 @@ func (p Connectioner) PublishToSyncPhones(message Message[SyncPhoneStruct]) erro
 			return err
 		}
 	}
-	
+
 	phoneBytes, err := json.Marshal(message)
 	if err != nil {
 		return err

@@ -51,12 +51,12 @@ func (p Connectioner) PublishToSyncUsers(message Message[SyncUserStruct]) error 
 	case "update":
 		fields := map[string]string{
 			"Uuid":      "required,uuid",
-			"Name":      "optional,min=3",
-			"Surname":   "optional,min=3",
+			"Name":      "omitempty,min=3",
+			"Surname":   "omitempty,min=3",
 			"UpdatedAt": "required",
 			"UpdatedBy": "required,numeric,min=1",
-			"DeletedAt": "optional",
-			"DeletedBy": "optional,numeric,min=1",
+			"DeletedAt": "omitempty",
+			"DeletedBy": "omitempty,numeric,min=1",
 		}
 
 		if err := validate.Validate(fields, message.Payload); err != nil {
@@ -75,17 +75,18 @@ func (p Connectioner) PublishToSyncUsers(message Message[SyncUserStruct]) error 
 	}
 
 	userBytes, err := json.Marshal(message)
-	
-	conn.SetWriteDeadline(time.Now().Add(10 * time.Second))
 	if err != nil {
 		return err
 	}
+
+	conn.SetWriteDeadline(time.Now().Add(10 * time.Second))
 	_, err = conn.WriteMessages(
 		kafka.Message{Value: userBytes},
 	)
 	if err != nil {
 		return err
 	}
+
 	if err := conn.Close(); err != nil {
 		return err
 	}

@@ -39,7 +39,7 @@ func (p Connectioner) PublishToSyncEmails(message Message[SyncEmailStruct]) erro
 		fields := map[string]string{
 			"Uuid":      "required,uuid",
 			"UserUuid":  "required,uuid",
-			"Main":      "optional,boolean",
+			"Main":      "omitempty,boolean",
 			"Email":     "required,min=3",
 			"CreatedAt": "required",
 			"UpdatedAt": "required",
@@ -52,13 +52,13 @@ func (p Connectioner) PublishToSyncEmails(message Message[SyncEmailStruct]) erro
 	case "update":
 		fields := map[string]string{
 			"Uuid":      "required,uuid",
-			"UserUuid":  "optional,uuid",
-			"Email":     "optional,min=3",
+			"UserUuid":  "omitempty,uuid",
+			"Email":     "omitempty,min=3",
 			"UpdatedAt": "required",
 			"UpdatedBy": "required,numeric,min=1",
-			"DeletedAt": "optional",
-			"DeletedBy": "optional,numeric,min=1",
-			"Main":      "optional,boolean",
+			"DeletedAt": "omitempty",
+			"DeletedBy": "omitempty,numeric,min=1",
+			"Main":      "omitempty,boolean",
 		}
 		if err := validate.Validate(fields, message.Payload); err != nil {
 			return err
