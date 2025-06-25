@@ -5,7 +5,6 @@ import (
 	"errors"
 	"time"
 
-	"github.com/dev-star-company/custom-validate/validate"
 	"github.com/dev-star-company/kafka-go/topics"
 	"github.com/google/uuid"
 	"github.com/segmentio/kafka-go"
@@ -36,40 +35,15 @@ func (p *Connectioner) PublishToSyncEmails(message Message[SyncEmailStruct]) err
 
 	switch message.Action {
 	case "create":
-		fields := map[string]string{
-			"Uuid":      "required,uuid",
-			"UserUuid":  "required,uuid",
-			"Main":      "omitempty,boolean",
-			"Email":     "required,min=3",
-			"CreatedAt": "required",
-			"UpdatedAt": "required",
-			"CreatedBy": "required,numeric,min=1",
-			"UpdatedBy": "required,numeric,min=1",
-		}
-		if err := validate.Validate(fields, message.Payload); err != nil {
+		if err := ValidateEmailCreate(message.Payload); err != nil {
 			return err
 		}
 	case "update":
-		fields := map[string]string{
-			"Uuid":      "required,uuid",
-			"UserUuid":  "omitempty,uuid",
-			"Email":     "omitempty,min=3",
-			"UpdatedAt": "required",
-			"UpdatedBy": "required,numeric,min=1",
-			"DeletedAt": "omitempty",
-			"DeletedBy": "omitempty,numeric,min=1",
-			"Main":      "omitempty,boolean",
-		}
-		if err := validate.Validate(fields, message.Payload); err != nil {
+		if err := ValidateEmailUpdate(message.Payload); err != nil {
 			return err
 		}
 	case "delete":
-		fields := map[string]string{
-			"Uuid":       "required,uuid",
-			"DetectedAt": "required",
-			"DetectedBy": "required,numeric,min=1",
-		}
-		if err := validate.Validate(fields, message.Payload); err != nil {
+		if err := ValidateEmailDelete(message.Payload); err != nil {
 			return err
 		}
 	}
