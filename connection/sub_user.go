@@ -12,9 +12,9 @@ import (
 
 func (c Connectioner) SubscribeToUsers(ctx context.Context) (<-chan SubResponse[SyncUserStruct], error) {
 	ch := make(chan SubResponse[SyncUserStruct])
-	conn, ok := c.connections[topics.SyncUsers]
-	if !ok {
-		return nil, fmt.Errorf("connection not found for topic %s", topics.SyncUsers)
+	conn, err := c.ConnectToTopic(topics.SyncUsers)
+	if err != nil {
+		return nil, err
 	}
 
 	conn.SetReadDeadline(time.Now().Add(10 * time.Second))

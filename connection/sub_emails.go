@@ -12,11 +12,10 @@ import (
 
 func (c Connectioner) SubscribeToEmails(ctx context.Context) (<-chan SubResponse[SyncEmailStruct], error) {
 	ch := make(chan SubResponse[SyncEmailStruct])
-	conn, ok := c.connections[topics.SyncEmails]
-	if !ok {
-		return nil, fmt.Errorf("connection not found for topic %s", topics.SyncEmails)
+	conn, err := c.ConnectToTopic(topics.SyncPhones)
+	if err != nil {
+		return nil, err
 	}
-
 	conn.SetReadDeadline(time.Now().Add(10 * time.Second))
 
 	ctrl, err := conn.Controller()

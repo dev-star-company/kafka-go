@@ -25,7 +25,7 @@ type SyncEmailStruct struct {
 }
 
 func (p Connectioner) PublishToSyncEmails(message Message[SyncEmailStruct]) error {
-	conn, err := p.ConnectToTopic(topics.SyncEmails, p.consumerGroupID)
+	conn, err := p.ConnectToTopic(topics.SyncEmails)
 	if err != nil {
 		return err
 	}

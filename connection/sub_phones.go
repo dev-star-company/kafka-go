@@ -3,7 +3,6 @@ package connection
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"strconv"
 	"time"
 
@@ -13,9 +12,9 @@ import (
 
 func (p Connectioner) SubscribeToPhones(ctx context.Context) (<-chan SubResponse[SyncPhoneStruct], error) {
 	ch := make(chan SubResponse[SyncPhoneStruct])
-	conn, ok := p.connections[topics.SyncPhones]
-	if !ok {
-		return nil, errors.New("connection not found for topic SyncPhones")
+	conn, err := p.ConnectToTopic(topics.SyncPhones)
+	if err != nil {
+		return nil, err
 	}
 
 	conn.SetReadDeadline(time.Now().Add(10 * time.Second))

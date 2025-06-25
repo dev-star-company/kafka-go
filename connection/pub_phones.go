@@ -25,7 +25,7 @@ type SyncPhoneStruct struct {
 }
 
 func (p Connectioner) PublishToSyncPhones(message Message[SyncPhoneStruct]) error {
-	conn, err := p.ConnectToTopic(topics.SyncPhones, p.consumerGroupID)
+	conn, err := p.ConnectToTopic(topics.SyncPhones)
 	if err != nil {
 		return err
 	}
