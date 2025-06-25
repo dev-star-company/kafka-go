@@ -40,8 +40,8 @@ func (p Connectioner) PublishToSyncUsers(message Message[SyncUserStruct]) error 
 			"Uuid":      "required,uuid",
 			"Name":      "required,min=3",
 			"Surname":   "required,min=3",
-			"CreatedAt": "required,datetime",
-			"UpdatedAt": "required,datetime",
+			"CreatedAt": "required",
+			"UpdatedAt": "required",
 			"CreatedBy": "required,numeric,min=1",
 			"UpdatedBy": "required,numeric,min=1",
 		}
@@ -54,9 +54,9 @@ func (p Connectioner) PublishToSyncUsers(message Message[SyncUserStruct]) error 
 			"Uuid":      "required,uuid",
 			"Name":      "optional,min=3",
 			"Surname":   "optional,min=3",
-			"UpdatedAt": "required,datetime",
+			"UpdatedAt": "required",
 			"UpdatedBy": "required,numeric,min=1",
-			"DeletedAt": "optional,datetime",
+			"DeletedAt": "optional",
 			"DeletedBy": "optional,numeric,min=1",
 		}
 
@@ -66,7 +66,7 @@ func (p Connectioner) PublishToSyncUsers(message Message[SyncUserStruct]) error 
 	case "delete":
 		fields := map[string]string{
 			"Uuid":       "required,uuid",
-			"DetectedAt": "required,datetime",
+			"DetectedAt": "required",
 			"DetectedBy": "required,numeric,min=1",
 		}
 
@@ -89,3 +89,5 @@ func (p Connectioner) PublishToSyncUsers(message Message[SyncUserStruct]) error 
 
 	return nil
 }
+
+

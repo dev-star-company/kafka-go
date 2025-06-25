@@ -19,6 +19,11 @@ type Connectioner struct {
 	consumerGroupID string
 }
 
+type SubResponse[T SyncEmailStruct | SyncPhoneStruct | SyncUserStruct] struct {
+	Message  Message[T] `json:"message"`   // The message received from the topic
+	CommitFn any        `json:"commit_fn"` // The commit function to call after processing the message
+}
+
 // ConsumerGroupId is the ID of the consumer group that will be used for subscribing to topics.
 // It is used to ensure that multiple consumers can read from the same topic without duplicating messages.
 // It is important to set this ID when creating a new Connectioner instance.

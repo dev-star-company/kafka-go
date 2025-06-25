@@ -10,8 +10,8 @@ import (
 	"github.com/segmentio/kafka-go"
 )
 
-func (c Connectioner) SubscribeToUsers(ctx context.Context) (<-chan Message[SyncUserStruct], error) {
-	ch := make(chan Message[SyncUserStruct])
+func (c Connectioner) SubscribeToUsers(ctx context.Context) (<-chan SubResponse[SyncUserStruct], error) {
+	ch := make(chan SubResponse[SyncUserStruct])
 	conn, ok := c.connections[topics.SyncUsers]
 	if !ok {
 		return nil, fmt.Errorf("connection not found for topic %s", topics.SyncUsers)
@@ -49,8 +49,7 @@ func (c Connectioner) SubscribeToUsers(ctx context.Context) (<-chan Message[Sync
 				continue // skip messages from the same publisher
 			}
 			select {
-			case ch <- user:
-				r.CommitMessages(ctx, msg) // Commit the message after successful processing
+			case ch <- SubResponse[SyncUserStruct]{Message: user, CommitFn: func() { r.CommitMessages(ctx, msg) }}:
 			case <-ctx.Done():
 				return
 			}

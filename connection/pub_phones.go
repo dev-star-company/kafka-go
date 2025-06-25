@@ -42,8 +42,8 @@ func (p Connectioner) PublishToSyncPhones(message Message[SyncPhoneStruct]) erro
 			"UserUuid":  "required,uuid",
 			"Main":      "optional,boolean",
 			"Phone":     "required,min=3",
-			"CreatedAt": "required,datetime",
-			"UpdatedAt": "required,datetime",
+			"CreatedAt": "required",
+			"UpdatedAt": "required",
 			"CreatedBy": "required,numeric,min=1",
 			"UpdatedBy": "required,numeric,min=1",
 		}
@@ -56,9 +56,9 @@ func (p Connectioner) PublishToSyncPhones(message Message[SyncPhoneStruct]) erro
 			"UserUuid":  "optional,uuid",
 			"Main":      "optional,boolean",
 			"Phone":     "optional,min=3",
-			"UpdatedAt": "required,datetime",
+			"UpdatedAt": "required",
 			"UpdatedBy": "required,numeric,min=1",
-			"DeletedAt": "optional,datetime",
+			"DeletedAt": "optional",
 			"DeletedBy": "optional,numeric,min=1",
 		}
 		if err := validate.Validate(fields, message.Payload); err != nil {
@@ -67,7 +67,7 @@ func (p Connectioner) PublishToSyncPhones(message Message[SyncPhoneStruct]) erro
 	case "delete":
 		fields := map[string]string{
 			"Uuid":       "required,uuid",
-			"DetectedAt": "required,datetime",
+			"DetectedAt": "required",
 			"DetectedBy": "required,numeric,min=1",
 		}
 		if err := validate.Validate(fields, message.Payload); err != nil {
