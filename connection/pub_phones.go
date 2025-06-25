@@ -26,9 +26,9 @@ type SyncPhoneStruct struct {
 }
 
 func (p Connectioner) PublishToSyncPhones(message Message[SyncPhoneStruct]) error {
-	conn, ok := p.connections[topics.SyncPhones]
-	if !ok {
-		return errors.New("connection not found for topic SyncPhones")
+	conn, err := p.ConnectToTopic(topics.SyncPhones, p.consumerGroupID)
+	if err != nil {
+		return err
 	}
 
 	if message.Action != "create" && message.Action != "update" && message.Action != "delete" {

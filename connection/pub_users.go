@@ -25,9 +25,9 @@ type SyncUserStruct struct {
 }
 
 func (p Connectioner) PublishToSyncUsers(message Message[SyncUserStruct]) error {
-	conn, ok := p.connections[topics.SyncUsers]
-	if !ok {
-		return errors.New("connection not found for topic SyncUsers")
+	conn, err := p.ConnectToTopic(topics.SyncUsers, p.consumerGroupID)
+	if err != nil {
+		return err
 	}
 
 	if message.Action != "create" && message.Action != "update" && message.Action != "delete" {
@@ -89,5 +89,3 @@ func (p Connectioner) PublishToSyncUsers(message Message[SyncUserStruct]) error 
 
 	return nil
 }
-
-
