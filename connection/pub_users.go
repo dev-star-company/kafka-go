@@ -3,7 +3,6 @@ package connection
 import (
 	"encoding/json"
 	"errors"
-	"log"
 	"time"
 
 	"github.com/dev-star-company/custom-validate/validate"
@@ -78,13 +77,13 @@ func (p Connectioner) PublishToSyncUsers(message Message[SyncUserStruct]) error 
 	conn.SetWriteDeadline(time.Now().Add(10 * time.Second))
 	userBytes, err := json.Marshal(message)
 	if err != nil {
-		log.Fatal("failed to marshal user:", err)
+		return err
 	}
 	_, err = conn.WriteMessages(
 		kafka.Message{Value: userBytes},
 	)
 	if err != nil {
-		log.Fatal("failed to write messages:", err)
+		return err
 	}
 
 	return nil

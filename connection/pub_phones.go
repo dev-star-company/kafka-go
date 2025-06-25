@@ -3,7 +3,6 @@ package connection
 import (
 	"encoding/json"
 	"errors"
-	"log"
 	"time"
 
 	"github.com/dev-star-company/custom-validate/validate"
@@ -79,13 +78,13 @@ func (p Connectioner) PublishToSyncPhones(message Message[SyncPhoneStruct]) erro
 
 	phoneBytes, err := json.Marshal(message)
 	if err != nil {
-		log.Fatal("failed to marshal phone:", err)
+		return err
 	}
 	_, err = conn.WriteMessages(
 		kafka.Message{Value: phoneBytes},
 	)
 	if err != nil {
-		log.Fatal("failed to write messages:", err)
+		return err
 	}
 
 	return nil

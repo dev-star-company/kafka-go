@@ -3,7 +3,6 @@ package connection
 import (
 	"encoding/json"
 	"errors"
-	"log"
 	"time"
 
 	"github.com/dev-star-company/custom-validate/validate"
@@ -79,13 +78,13 @@ func (p Connectioner) PublishToSyncEmails(message Message[SyncEmailStruct]) erro
 
 	emailBytes, err := json.Marshal(message)
 	if err != nil {
-		log.Fatal("failed to marshal email:", err)
+		return err
 	}
 	_, err = conn.WriteMessages(
 		kafka.Message{Value: emailBytes},
 	)
 	if err != nil {
-		log.Fatal("failed to write messages:", err)
+		return err
 	}
 
 	return nil
