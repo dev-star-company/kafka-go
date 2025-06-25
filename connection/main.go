@@ -43,11 +43,20 @@ func (c *Connectioner) ConnectToTopic(topic topics.Topic) (*kafka.Conn, error) {
 		return c.connections[topic], nil
 	}
 
-	conn, err := kafka.DialLeader(context.Background(), "tcp", c.brokerUrl, string(topic), 0)
+	conn, err := c.Connect(topic)
 	if err != nil {
 		return nil, err
 	}
 
 	c.connections[topic] = conn
+	return conn, nil
+}
+
+func (c *Connectioner) Connect(topic topics.Topic) (*kafka.Conn, error) {
+	conn, err := kafka.DialLeader(context.Background(), "tcp", c.brokerUrl, string(topic), 0)
+	if err != nil {
+		return nil, err
+	}
+
 	return conn, nil
 }

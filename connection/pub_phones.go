@@ -25,7 +25,7 @@ type SyncPhoneStruct struct {
 }
 
 func (p Connectioner) PublishToSyncPhones(message Message[SyncPhoneStruct]) error {
-	conn, err := p.ConnectToTopic(topics.SyncPhones)
+	conn, err := p.Connect(topics.SyncPhones)
 	if err != nil {
 		return err
 	}
@@ -73,13 +73,13 @@ func (p Connectioner) PublishToSyncPhones(message Message[SyncPhoneStruct]) erro
 			return err
 		}
 	}
-
-	conn.SetWriteDeadline(time.Now().Add(10 * time.Second))
-
+	
 	phoneBytes, err := json.Marshal(message)
 	if err != nil {
 		return err
 	}
+
+	conn.SetWriteDeadline(time.Now().Add(10 * time.Second))
 	_, err = conn.WriteMessages(
 		kafka.Message{Value: phoneBytes},
 	)
@@ -87,5 +87,8 @@ func (p Connectioner) PublishToSyncPhones(message Message[SyncPhoneStruct]) erro
 		return err
 	}
 
+	if err := conn.Close(); err != nil {
+		return err
+	}
 	return nil
 }

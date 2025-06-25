@@ -25,7 +25,7 @@ type SyncEmailStruct struct {
 }
 
 func (p Connectioner) PublishToSyncEmails(message Message[SyncEmailStruct]) error {
-	conn, err := p.ConnectToTopic(topics.SyncEmails)
+	conn, err := p.Connect(topics.SyncEmails)
 	if err != nil {
 		return err
 	}
@@ -74,9 +74,9 @@ func (p Connectioner) PublishToSyncEmails(message Message[SyncEmailStruct]) erro
 		}
 	}
 
-	conn.SetWriteDeadline(time.Now().Add(10 * time.Second))
-
 	emailBytes, err := json.Marshal(message)
+
+	conn.SetWriteDeadline(time.Now().Add(10 * time.Second))
 	if err != nil {
 		return err
 	}
@@ -87,5 +87,8 @@ func (p Connectioner) PublishToSyncEmails(message Message[SyncEmailStruct]) erro
 		return err
 	}
 
+	if err := conn.Close(); err != nil {
+		return err
+	}
 	return nil
 }

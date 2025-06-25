@@ -24,7 +24,7 @@ type SyncUserStruct struct {
 }
 
 func (p Connectioner) PublishToSyncUsers(message Message[SyncUserStruct]) error {
-	conn, err := p.ConnectToTopic(topics.SyncUsers)
+	conn, err := p.Connect(topics.SyncUsers)
 	if err != nil {
 		return err
 	}
@@ -74,8 +74,9 @@ func (p Connectioner) PublishToSyncUsers(message Message[SyncUserStruct]) error 
 		}
 	}
 
-	conn.SetWriteDeadline(time.Now().Add(10 * time.Second))
 	userBytes, err := json.Marshal(message)
+	
+	conn.SetWriteDeadline(time.Now().Add(10 * time.Second))
 	if err != nil {
 		return err
 	}
@@ -85,6 +86,8 @@ func (p Connectioner) PublishToSyncUsers(message Message[SyncUserStruct]) error 
 	if err != nil {
 		return err
 	}
-
+	if err := conn.Close(); err != nil {
+		return err
+	}
 	return nil
 }
