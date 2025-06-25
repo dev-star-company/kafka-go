@@ -24,7 +24,7 @@ type SyncEmailStruct struct {
 	Main      *bool      `json:"main"`
 }
 
-func (p Connectioner) PublishToSyncEmails(message Message[SyncEmailStruct]) error {
+func (p *Connectioner) PublishToSyncEmails(message Message[SyncEmailStruct]) error {
 	conn, err := p.Connect(topics.SyncEmails)
 	if err != nil {
 		return err

@@ -24,7 +24,7 @@ type SyncPhoneStruct struct {
 	Main      *bool      `json:"main"`
 }
 
-func (p Connectioner) PublishToSyncPhones(message Message[SyncPhoneStruct]) error {
+func (p *Connectioner) PublishToSyncPhones(message Message[SyncPhoneStruct]) error {
 	conn, err := p.Connect(topics.SyncPhones)
 	if err != nil {
 		return err

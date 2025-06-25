@@ -2,6 +2,7 @@ package connection
 
 import (
 	"context"
+	"sync"
 
 	"github.com/dev-star-company/kafka-go/actions"
 	"github.com/dev-star-company/kafka-go/topics"
@@ -15,7 +16,7 @@ type Message[T SyncEmailStruct | SyncPhoneStruct | SyncUserStruct] struct {
 }
 
 type Connectioner struct {
-	connections     map[topics.Topic]*kafka.Conn
+	connections     sync.Map
 	consumerGroupID string
 	brokerUrl       string
 }
@@ -31,7 +32,7 @@ type SubResponse[T SyncEmailStruct | SyncPhoneStruct | SyncUserStruct] struct {
 // Should be set to a unique value for each consumer group.
 func New(brokerUrl string, consumerGroupID string) *Connectioner {
 	return &Connectioner{
-		connections:     make(map[topics.Topic]*kafka.Conn),
+		connections:     sync.Map{},
 		consumerGroupID: consumerGroupID,
 		brokerUrl:       brokerUrl,
 	}
@@ -39,8 +40,8 @@ func New(brokerUrl string, consumerGroupID string) *Connectioner {
 
 // Use topics from topics package
 func (c *Connectioner) ConnectToTopic(topic topics.Topic) (*kafka.Conn, error) {
-	if c.connections[topic] != nil {
-		return c.connections[topic], nil
+	if conn, ok := c.connections.Load(topic); ok {
+		return conn.(*kafka.Conn), nil
 	}
 
 	conn, err := c.Connect(topic)
@@ -48,7 +49,7 @@ func (c *Connectioner) ConnectToTopic(topic topics.Topic) (*kafka.Conn, error) {
 		return nil, err
 	}
 
-	c.connections[topic] = conn
+	c.connections.Store(topic, conn)
 	return conn, nil
 }
 

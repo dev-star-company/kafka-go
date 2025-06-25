@@ -10,7 +10,7 @@ import (
 	"github.com/segmentio/kafka-go"
 )
 
-func (c Connectioner) SubscribeToEmails(ctx context.Context) (<-chan SubResponse[SyncEmailStruct], error) {
+func (c *Connectioner) SubscribeToEmails(ctx context.Context) (<-chan SubResponse[SyncEmailStruct], error) {
 	ch := make(chan SubResponse[SyncEmailStruct])
 	conn, err := c.ConnectToTopic(topics.SyncEmails)
 	if err != nil {

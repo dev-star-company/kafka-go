@@ -23,7 +23,7 @@ type SyncUserStruct struct {
 	DeletedBy *int       `json:"deleted_by,omitempty"`
 }
 
-func (p Connectioner) PublishToSyncUsers(message Message[SyncUserStruct]) error {
+func (p *Connectioner) PublishToSyncUsers(message Message[SyncUserStruct]) error {
 	conn, err := p.Connect(topics.SyncUsers)
 	if err != nil {
 		return err
