@@ -12,7 +12,7 @@ import (
 
 func (c Connectioner) SubscribeToEmails(ctx context.Context) (<-chan SubResponse[SyncEmailStruct], error) {
 	ch := make(chan SubResponse[SyncEmailStruct])
-	conn, err := c.ConnectToTopic(topics.SyncPhones)
+	conn, err := c.ConnectToTopic(topics.SyncEmails)
 	if err != nil {
 		return nil, err
 	}
