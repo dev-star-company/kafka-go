@@ -51,7 +51,7 @@ func (c Connectioner) SubscribeToEmails(ctx context.Context) (<-chan SubResponse
 				continue // skip messages from the same publisher
 			}
 			select {
-			case ch <- SubResponse[SyncEmailStruct]{Message: email, CommitFn: func() { r.CommitMessages(ctx, msg) }}:
+			case ch <- SubResponse[SyncEmailStruct]{Message: email, CommitFn: func() error { return r.CommitMessages(ctx, msg) }}:
 			case <-ctx.Done():
 				return
 			}

@@ -49,7 +49,7 @@ func (c Connectioner) SubscribeToUsers(ctx context.Context) (<-chan SubResponse[
 				continue // skip messages from the same publisher
 			}
 			select {
-			case ch <- SubResponse[SyncUserStruct]{Message: user, CommitFn: func() { r.CommitMessages(ctx, msg) }}:
+			case ch <- SubResponse[SyncUserStruct]{Message: user, CommitFn: func() error { return r.CommitMessages(ctx, msg) }}:
 			case <-ctx.Done():
 				return
 			}
