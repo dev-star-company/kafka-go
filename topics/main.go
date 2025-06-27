@@ -8,4 +8,5 @@ const (
 	SyncEmails    Topic = "sync.emails"
 	SyncAddresses Topic = "sync.addresses"
 	SyncRoles     Topic = "sync.roles"
+	SyncPasswords Topic = "sync.passwords"
 )
