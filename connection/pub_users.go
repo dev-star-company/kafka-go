@@ -20,8 +20,6 @@ type SyncUserStruct struct {
 	CreatedBy *int              `json:"created_by"`
 	UpdatedBy *int              `json:"updated_by"`
 	DeletedBy *int              `json:"deleted_by,omitempty"`
-	Phones    []SyncPhoneStruct `json:"phones,omitempty"`
-	Emails    []SyncEmailStruct `json:"emails,omitempty"`
 }
 
 func (p *Connectioner) PublishToSyncUsers(message Message[SyncUserStruct]) error {

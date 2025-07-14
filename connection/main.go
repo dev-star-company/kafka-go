@@ -10,7 +10,7 @@ import (
 	"github.com/segmentio/kafka-go"
 )
 
-type Message[T SyncEmailStruct | SyncPhoneStruct | SyncUserStruct] struct {
+type Message[T SyncUserStruct] struct {
 	Action    actions.Action `json:"action"`    // "create", "update", or "delete"
 	Payload   T              `json:"object"`    // any of the SyncSomethingStruct types
 	Publisher string         `json:"publisher"` // the name of the publisher
@@ -22,7 +22,7 @@ type Connectioner struct {
 	brokerUrl       string
 }
 
-type SubResponse[T SyncEmailStruct | SyncPhoneStruct | SyncUserStruct] struct {
+type SubResponse[T SyncUserStruct] struct {
 	Message  Message[T]   `json:"message"`   // The message received from the topic
 	CommitFn func() error `json:"commit_fn"` // The commit function to call after processing the message
 }

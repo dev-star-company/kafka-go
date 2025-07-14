@@ -12,21 +12,10 @@ func ValidateUserCreate(user SyncUserStruct) error {
 		"CreatedBy": "required,numeric,min=1",
 		"UpdatedBy": "required,numeric,min=1",
 	}
+	
 
 	if err := validate.Validate(fields, user); err != nil {
 		return err
-	}
-
-	for _, phone := range user.Phones {
-		if err := ValidatePhoneCreate(phone); err != nil {
-			return err
-		}
-	}
-
-	for _, email := range user.Emails {
-		if err := ValidateEmailCreate(email); err != nil {
-			return err
-		}
 	}
 
 	return nil
